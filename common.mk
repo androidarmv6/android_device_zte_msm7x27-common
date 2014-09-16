@@ -20,17 +20,6 @@ DEVICE_PACKAGE_OVERLAYS := device/zte/msm7x27-common/overlay
 # Inherit qcom common
 $(call inherit-product, device/qcom/msm7x27/msm7x27.mk)
 
-# Inherit from those products. Most specific first.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
-
-# Inherit hdpi 512
-$(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
-
-# AAPT
-PRODUCT_AAPT_CONFIG := normal hdpi
-PRODUCT_AAPT_PREF_CONFIG := hdpi
-
 # GPS
 PRODUCT_PACKAGES += \
     librpc 
@@ -57,16 +46,51 @@ PRODUCT_PACKAGES += \
     audio_policy.msm7x27 \
     audio.usb.default
 
+# Bluetooh
+PRODUCT_PACKAGES += \
+    brcm_patchram_plus
+
 # FM Radio
 # PRODUCT_COPY_FILES += \
 #        frameworks/native/data/etc/com.stericsson.hardware.fm.receiver.xml:system/etc/permissions/com.stericsson.hardware.fm.receiver.xml
 
-# Media and vold
+# Prebuilt
 PRODUCT_COPY_FILES += \
-    device/zte/msm7x27-common/prebuilt/vold.fstab:system/etc/vold.fstab \
-    device/zte/msm7x27-common/media/AudioFilter.csv:system/etc/AudioFilter.csv \
-    device/zte/msm7x27-common/media/AutoVolumeControl.txt:system/etc/AutoVolumeControl.txt \
-    device/zte/msm7x27-common/media/media_profiles.xml:system/etc/media_profiles.xml \
-    device/zte/msm7x27-common/media/audio_policy.conf:system/etc/audio_policy.conf \
-    device/zte/msm7x27-common/media/media_codecs.xml:system/etc/media_codecs.xml \
-    device/zte/msm7x27-common/prebuilt/gps.conf:system/etc/gps.conf
+        $(call find-copy-subdir-files,*,device/zte/skate/prebuilt/system,system)
+
+# KSM
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.ksm.default=1
+
+# Development & ADB authentication settings
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    ro.debuggable=1 \
+    ro.adb.secure=0 \
+    ro.secure=0 \
+    ro.allow.mock.location=0
+
+# Dalvik
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.checkjni=0 \
+    dalvik.vm.debug.alloc=0 \
+    dalvik.vm.dexopt-data-only=1
+
+# Disable strict mode
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.strictmode.visual=0 \
+    persist.sys.strictmode.disable=1
+
+# Enable repeatable keys in CWM
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.cwm.enable_key_repeat=true
+
+# Inherit from those products. Most specific first.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
+
+# Inherit hdpi 512
+$(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
+
+# AAPT
+PRODUCT_AAPT_CONFIG := normal hdpi
+PRODUCT_AAPT_PREF_CONFIG := hdpi
