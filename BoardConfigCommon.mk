@@ -26,12 +26,17 @@ TARGET_SPECIFIC_HEADER_PATH := device/zte/msm7x27-common/include
 TARGET_BOOTLOADER_BOARD_NAME := sharp
 
 # Recovery
-# BOARD_CUSTOM_GRAPHICS := ../../../device/zte/msm7x27-common/recovery/graphics.c
-# BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/zte/msm7x27-common/recovery/recovery_keys.c
+BOARD_HAS_NO_SELECT_BUTTON := true
+TARGET_NO_INITLOGO := true
+TARGET_NO_SEPARATE_RECOVERY := true
+TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
+TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness\"
+TARGET_RECOVERY_FSTAB := device/zte/msm7x27-common/recovery/recovery.fstab
 
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/zte/msm7x27
 BOARD_KERNEL_BASE := 0x02600000
+BOARD_KERNEL_PAGESIZE := 2048
 
 # Provides
 BOARD_PROVIDES_LIBRIL := true
@@ -43,8 +48,17 @@ TARGET_PROVIDES_LIBLIGHT := true
 #BOARD_HAVE_QCOM_FM := true
 #COMMON_GLOBAL_CFLAGS += -DSTE_FM -DQCOM_FM_ENABLED
 
+# Override healthd HAL
+BOARD_HAL_STATIC_LIBRARIES := libhealthd.msm7x27
+
 # Metadata
 USE_SET_METADATA := false
+
+# SELinux
+BOARD_SEPOLICY_DIRS += device/zte/msm7x27-common/sepolicy
+BOARD_SEPOLICY_UNION += \
+    file_contexts \
+    genfs_contexts
 
 # USB
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/devices/platform/msm_hsusb/gadget/lun0/file
